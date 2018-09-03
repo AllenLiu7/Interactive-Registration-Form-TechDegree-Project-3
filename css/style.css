@@ -184,11 +184,6 @@ button:hover {
   form validation
 ==================================== */
 
-  .active {
+.active {
     color: red
-
-  }
-
-  .inactive {
-    
   }
