@@ -93,28 +93,7 @@ $(".activities input:checkbox").change(function(){
   }
 })
 
-//credit card option is the default selected option
-$("#payment option[value='credit card']").attr('selected', 'selected')
-$("#payment option[value='select_method']").attr("disabled", "true")
-//hide the other option when page loaded
-$(".paypal").hide()
-$(".bitcoin").hide()
-//hide and show element based on selection
-$('#payment').on('change', function() {
-  if ($(this).val() === "paypal") {
-    $(".paypal").show();
-    $(".credit-card").hide();
-    $(".bitcoin").hide();
-  } else if ($(this).val() === "bitcoin") {
-    $(".paypal").hide();
-    $(".credit-card").hide();
-    $(".bitcoin").show();
-  } else if ($(this).val() === "credit card") {
-    $(".paypal").hide();
-    $(".credit-card").show();
-    $(".bitcoin").hide();
-  }
-})
+
 
 // set variables for form validation
 var form  = document.getElementsByTagName('form')[0];
@@ -131,11 +110,54 @@ let zipCode = document.getElementById('zip');
 let zipcodeLabel = document.getElementById('ziplabel')
 let cvv = document.getElementById('cvv');
 let cvvLabel = document.getElementById('ccvlabel')
+let expmonth = document.getElementById('exp-month')
+let expyear = document.getElementById('exp-year')
+
+
+//credit card option is the default selected option
+$("#payment option[value='credit card']").attr('selected', 'selected')
+$("#payment option[value='select_method']").attr("disabled", "true")
+//hide the other option when page loaded
+$(".paypal").hide()
+$(".bitcoin").hide()
+
+//hide and show element based on selection, disable all credit card inputs and selects
+// when paypal or bitcoin option is selected
+$('#payment').on('change', function() {
+  if ($(this).val() === "paypal") {
+    $(".paypal").show();
+    $(".credit-card").hide();
+    $(".bitcoin").hide();
+    ccNum.setAttribute("disabled", "true");
+    zipCode.setAttribute("disabled", "true");
+    cvv.setAttribute("disabled", "true");
+    expmonth.setAttribute("disabled", "true");
+    expyear.setAttribute("disabled", "true");
+  } else if ($(this).val() === "bitcoin") {
+    $(".paypal").hide();
+    $(".credit-card").hide();
+    $(".bitcoin").show();
+    ccNum.setAttribute("disabled", "true");
+    zipCode.setAttribute("disabled", "true");
+    cvv.setAttribute("disabled", "true");
+    expmonth.setAttribute("disabled", "true");
+    expyear.setAttribute("disabled", "true");
+  } else if ($(this).val() === "credit card") {
+    $(".paypal").hide();
+    $(".credit-card").show();
+    $(".bitcoin").hide();
+    ccNum.removeAttribute("disabled");
+    zipCode.removeAttribute("disabled");
+    cvv.removeAttribute("disabled");
+    expmonth.removeAttribute("disabled");
+    expyear.removeAttribute("disabled");
+  }
+})
 
 email.addEventListener("input", function (event) {
   // Each time the user types something, check if the
-  // email field is valid.
-  if (!email.validity.valid) {
+  // email field is valid using javascript
+  if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email.value)) {
     // if the address is invalid, print the massage and change the color
     emailLabel.innerHTML = "Email:(Please provide a valid email address)";
     emailLabel.className = "active";
@@ -158,15 +180,20 @@ form.addEventListener("submit", function (event) {
     textLabel.innerHTML = "Name:";
     textLabel.className = "inactive";
   }
-  // the email input should not be empty and should be in right format
-  if (!email.validity.valid) {
+  // the email input should not be empty and should be in right format, using javascript
+  if (email.value === "") {
     emailLabel.innerHTML = "Email:(email address is required)";
+    emailLabel.className = "active";
+    event.preventDefault();
+  } else if (email.value !== "" && !/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email.value)) {
+    emailLabel.innerHTML = "Email:(Please provide a valid email address)";
     emailLabel.className = "active";
     event.preventDefault();
   } else {
     emailLabel.innerHTML = "Email:";
     emailLabel.className = "inactive";
   }
+
   // at least one check box should be checked
   if (!checkboxes.is(":checked")) {
     checkboxLabel.innerHTML="Please select an Activity";
